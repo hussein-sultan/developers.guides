@@ -1,4 +1,5 @@
-# Developers Guides
+<h1 style='color:orange'>  Developers Guides </h1>
+
 
 ## Main Sections
 
@@ -16,7 +17,7 @@ Use this handbook to keep implementation style consistent across features.
 When adding a new module, check this file first and follow the same patterns.
 
 <a id="api-structure-guides"></a>
-<h2 style="color:#2B8A3E; margin-top:32px; margin-bottom:18px;">Api-Structure Guides</h2>
+<h2 style="color:green; margin-top:32px; margin-bottom:18px;">Api-Structure Guides</h2>
 
 The request layer is organized in small, clear steps:
 
@@ -138,7 +139,7 @@ General rules:
 - Keep each file focused on one responsibility.
 
 <a id="customdialog-guides"></a>
-<h2 style="color:#2B8A3E; margin-top:32px; margin-bottom:18px;">CustomDialog Guides</h2>
+<h2 style="color:green; margin-top:32px; margin-bottom:18px;">CustomDialog Guides</h2>
 
 Reference component: [components/customs/CustomDialog.tsx](components/customs/CustomDialog.tsx)
 
@@ -222,7 +223,7 @@ function handleDeleteSuccess() {
 ```
 
 <a id="customalert-guides"></a>
-<h2 style="color:#2B8A3E; margin-top:32px; margin-bottom:18px;">CustomAlert Guides</h2>
+<h2 style="color:green; margin-top:32px; margin-bottom:18px;">CustomAlert Guides</h2>
 
 Reference component: [components/customs/CustomAlert.tsx](components/customs/CustomAlert.tsx)
 
@@ -293,7 +294,7 @@ class UserService {
 ```
 
 <a id="customform-guides"></a>
-<h2 style="color:#2B8A3E; margin-top:32px; margin-bottom:18px;">CustomForm Guides</h2>
+<h2 style="color:green; margin-top:32px; margin-bottom:18px;">CustomForm Guides</h2>
 
 Reference component: [components/customs/CustomForm.tsx](components/customs/CustomForm.tsx)
 

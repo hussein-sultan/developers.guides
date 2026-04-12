@@ -60,8 +60,26 @@ formData.append('file', file)
 await apiRequest<{ ok: boolean }>(
   { endpoint: '/upload' },
   {},
+  undefined,
   { method: 'POST', body: formData }
 )
+```
+
+1. Revalidate path and cache tag after mutation
+
+```ts
+await usersService.update(
+  { name: 'Updated User' },
+  '/users',
+  '123',
+  { success: 'User updated' },
+  {},
+  'users'
+)
+
+// Internally:
+// revalidatePath('/users')
+// revalidateTag('users', 'default')
 ```
 
 1. Optional id in `get` and `update` methods
@@ -109,17 +127,52 @@ if (!result.success) {
 
 Available service methods:
 
-- `getAll(messages?, options?)`
-- `get(id?, messages?, options?)`
-- `create(data, messages?, options?)`
-- `update(data, id?, messages?, options?)`
-- `updateProp(data, id?, messages?, options?)`
-- `delete(id?, messages?, options?)`
+- `getAll(messages, options?, tag?)`
+- `get(id?, messages?, options?, tag?)`
+- `create(data, messages, revalidate, options?, tag?)`
+- `update(data, revalidate, id?, messages?, options?, tag?)`
+- `updateProp(data, revalidate, id?, messages?, options?, tag?)`
+- `delete(revalidate, id?, messages?, options?, tag?)`
+
+Cache invalidation notes:
+
+- Use `revalidate` for path-based invalidation (calls `revalidatePath`).
+- Use `tag` for tag-based invalidation (calls `revalidateTag(tag, 'default')`).
+- Use both in mutations when list/detail pages are cached by path and by tag.
 
 ## Error And Response Handling
 
-Every requests return a consistent `Result` object.
+Every request returns a consistent `Result` object.
 This makes it easier to handle success and failure in one predictable pattern.
+
+Message + Result design pattern:
+
+- `result.message` is always present for both success and failure responses.
+- Success shape: `{ success: true, message, statusCode, data }`
+- Failure shape: `{ success: false, message, statusCode, error }`
+- Prefer setting clear `messages.success` and `messages.failure` at the call site so UI feedback stays consistent.
+
+Example:
+
+```ts
+const result = await usersService.create(
+  values,
+  {
+    success: 'User created successfully',
+    failure: 'Could not create user'
+  },
+  '/users',
+  {},
+  'users'
+)
+
+if (!result.success) {
+  showError(result.message)
+  return
+}
+
+showSuccess(result.message)
+```
 
 General rules:
 

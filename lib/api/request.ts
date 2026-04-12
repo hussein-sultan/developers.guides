@@ -2,10 +2,11 @@ import { ApiRequestConfig, ApiRequestError, ApiRequestInitConfig, MessagesType }
 import { PathType } from "@/types/common";
 import { failureResult, Result, successResult } from "@/types/common/result";
 import { isBodyInit, normalizeEndpoint } from "@/utils/request";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const BASE_URL = 'http://localhost:3001'
 
-export async function apiRequest<T>(path: PathType, messages: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T, ApiRequestError>> {
+export async function apiRequest<T>(path: PathType, messages: MessagesType, revalidate?: string, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T, ApiRequestError>> {
   const { method = 'GET', body, headers, next, ...customConfig } = options
   const normalizedEndpoint = normalizeEndpoint(path?.endpoint ?? '')
 
@@ -25,37 +26,29 @@ export async function apiRequest<T>(path: PathType, messages: MessagesType, opti
   try {
 
     const url = path.url ? path.url : new URL(normalizedEndpoint, `${BASE_URL}/`).toString()
-    console.log(url)
     const response = await fetch(url, config)
 
     if (!response.ok) {
-      if (messages.failure) {
-        // Optionally, you could trigger a toast or notification here using the failure message
-      }
+      const errorMessage = messages?.failure || `Request failed with status ${response.status}`
       return failureResult({
-        message: `Request failed with status ${response.status}`,
+        message: errorMessage,
         status: response.status,
         info: await response.text()
-      }, response.status)
+      }, errorMessage, response.status)
     }
 
-    if (messages.success) {
-      // Optionally, you could trigger a toast or notification here using the success message
-    }
+    if (revalidate) revalidatePath(revalidate)
+    if (tag) revalidateTag(tag, 'default')
+
     const data: T = await response.json()
-    return successResult(data, response.status)
+    return successResult(data, messages?.success ?? '', response.status)
 
   } catch (error) {
-
-    const message = error instanceof Error ? error.message : "Unknown fetch error"
-    if (messages.failure) {
-      // Optionally, you could trigger a toast or notification here using the failure message
-    }
-
+    const errorMessage = messages?.failure ?? ''
     return failureResult({
-      message,
+      message: errorMessage,
       status: 500,
       info: { cause: error }
-    }, 500)
+    }, errorMessage, 500)
   }
 }

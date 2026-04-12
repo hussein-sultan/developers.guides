@@ -12,28 +12,28 @@ export class FactoryRequest<T, TCreate = Partial<T>, TUpdate = Partial<T>> {
   }
 
 
-  create = (data: TCreate, messages: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T, ApiRequestError>> => {
-    return apiRequest<T>(this.#path, messages, { method: "POST", body: data, ...options })
+  create = (data: TCreate, messages: MessagesType, revalidate: string, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T, ApiRequestError>> => {
+    return apiRequest<T>(this.#path, messages, revalidate, { method: "POST", body: data, ...options }, tag)
   }
 
-  get = (id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T, ApiRequestError>> => {
-    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, options)
+  get = (id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T, ApiRequestError>> => {
+    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, '', options, tag)
   }
 
-  getAll = (messages: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T[], ApiRequestError>> => {
-    return apiRequest<T[]>(this.#path, messages, options)
+  getAll = (messages: MessagesType, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T[], ApiRequestError>> => {
+    return apiRequest<T[]>(this.#path, messages, '', options, tag)
   }
 
-  update = (data: TUpdate, id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T, ApiRequestError>> => {
-    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, { method: 'PUT', body: data, ...options })
+  update = (data: TUpdate, revalidate: string, id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T, ApiRequestError>> => {
+    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, revalidate, { method: 'PUT', body: data, ...options }, tag)
   }
 
-  updateProp = (data: TUpdate, id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T, ApiRequestError>> => {
-    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, { method: 'PATCH', body: data, ...options })
+  updateProp = (data: TUpdate, revalidate: string, id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T, ApiRequestError>> => {
+    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, revalidate, { method: 'PATCH', body: data, ...options }, tag)
   }
 
-  delete = (id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}): Promise<Result<T, ApiRequestError>> => {
-    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, { method: 'DELETE', ...options })
+  delete = (revalidate: string, id?: IdType, messages?: MessagesType, options: ApiRequestConfig = {}, tag?: string): Promise<Result<T, ApiRequestError>> => {
+    return apiRequest<T>({ ...this.#path, endpoint: `${this.#path.endpoint}/${id ?? ''}` }, messages ?? {}, revalidate, { method: 'DELETE', ...options }, tag)
   }
 }
 
